@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.DynamicSQLMapper">
+    <select id="getEmpByCondition" resultType="emp">
+        select <include refid="empColumns"></include>
+        from t_emp
+        <where>
+            <if test="empName != null and empName!=''">emp_name=#{empName}</if>
+            <if test="age != null and age!=''">and age=#{age}</if>;
+        </where>
+
+    </select>
+    <select id="getEmpByChoose" resultType="emp">
+        select *
+        from t_emp
+        <where>
+            <choose>
+                <when test="empName!=null and empName !=''">emp_name=#{empName}</when>
+                <when test="age != null and age!=''">age=#{age}</when>
+                <otherwise>eid=1</otherwise>
+            </choose>
+        </where>
+        ;
+    </select>
+    <delete id="deleteMoreByArray" >delete
+                                    from t_emp
+                                    where eid in (<foreach collection="eids" item="eid" separator=",">
+            #{eid}
+        </foreach>) ;</delete>
+    <sql id="empColumns">eid,emp_name,age</sql>
+    <insert id="insertMoreByList" >insert into t_emp
+                                  values <foreach collection="emps" item="emp" separator=",">
+            (null,#{emp.empName},#{emp.age},null)
+        </foreach> ;</insert>
+
+    <select id="selectAll" resultType="emp">select * from t_emp</select>
+    <update id="upDateEmp" parameterType="emp">
+        update t_emp set emp_name=#{empName},age=#{age} where eid=#{eid}
+    </update>
+    <select id="findTotal" resultType="int">select count(*)
+                           from t_emp;</select>
+    <select id="findById" resultType="emp" parameterType="int">select *
+                                                               from t_emp where eid=#{eid};</select>
+    <select id="findByName" parameterType="string" resultType="emp">
+        select *
+        from t_emp where emp_name like '%' #{empName} '%';
+    </select>
+</mapper>

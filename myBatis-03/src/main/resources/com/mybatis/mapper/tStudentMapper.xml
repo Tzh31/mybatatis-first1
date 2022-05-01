@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.tStudentMapper">
+
+    <resultMap id="StudentMapper" type="tStudent">
+        <id property="id" column="id"></id>
+        <result column="stdno" property="stdNo"></result>
+        <result property="stdName" column="stdname"></result>
+<collection property="classes" ofType="tClass">
+    <id property="classNo" column="classno"></id>
+    <result column="name" property="name"></result>
+</collection>
+
+    </resultMap>
+    <select id="queryAll" resultMap="StudentMapper">
+        select a.*,b.*
+        from stu_class c join t_class b on b.classno=classId right join t_student a on a.id=c.s_id;
+    ;
+    </select>
+    <select id="queryById" resultMap="StudentMapper">
+        select a.*,b.*
+        from stu_class c join t_class b on b.classno=classId join t_student a on a.id=c.s_id where a.id=#{id};
+    </select>
+</mapper>
